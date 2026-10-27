@@ -19,7 +19,7 @@ function Header() {
           <b>Busque seu CEP facilmente!</b>
         </div>
         <div className="right-side-header">
-          <div>Sobre</div>
+          <div>Versão de Teste</div>
         </div>
       </header>
     </>
@@ -48,6 +48,8 @@ function MainView() {
   const [invalidCountry, setInvalidCountry]=useState<boolean>(false)
   const [errorMsg, setErrorMsg]=useState<string>("")
 
+  const [copyClip, setCopyClip]=useState<string>("Copiar")
+
   const handleGeoCoding = async() => {
     setLoadingGeo(true)
     if (navigator.geolocation){
@@ -71,6 +73,8 @@ function MainView() {
       if (!resp_geo.ok) {
         if (resp_geo.status === 429) {
           throw new Error('Muitas requisições!')
+        } else if (resp_geo.status === 400) {
+          throw new Error('Erro de Digitação!')
         } else {
           const errData = await resp_geo.json()
           throw new Error(errData.error || 'Erro incomum, verifique o console.');
@@ -92,26 +96,58 @@ function MainView() {
   }
 
   const handleCEPFetch = async() => {
+    setFinalCep("")
+    setErrorMsg("")
+
     if (country!="Brasil") {
       setInvalidCountry(true)
       return
     } else {
+      if (state==""&&cidad==""&&rua==""){
+        setErrorMsg("Insira todas as informações acima.")
+        return
+      }
+      if (state==""){
+        setErrorMsg("Insira um estado.")
+        return
+      }
+      if (cidad=="") {
+        setErrorMsg("Insira uma cidade")
+        return
+      }
+      if (rua==""){
+        setErrorMsg("Insira uma Rua.")
+        return
+      }
       setInvalidCountry(false)
-      setFinalCep("")
-      setErrorMsg("")
     }
+
+    const stcod:string = stateCode.replace(/[~`!@#$%^&()_={}[\]:;,.<>+\/?-]/, "")
+    const cidade:string = cidad.replace(/[~`!@#$%^&()_={}[\]:;,.<>+\/?-]/, "").toLowerCase()
+    const ruat:string = rua.replace(/[~`!@#$%^&()_={}[\]:;,.<>+\/?-]/, "").toLowerCase()
+
     try {
       setLoadingCEP(true)
-      const resp_via = await fetch(`https://viacep.com.br/ws/${stateCode}/${cidad}/${rua}/json/`)
+      const resp_via = await fetch(`https://viacep.com.br/ws/${encodeURIComponent(stcod)}/${encodeURIComponent(cidade)}/${encodeURIComponent(ruat)}/json/`)
       const res: ViaCEPTypage[] | null = await resp_via.json()
       console.log(JSON.stringify(res, null, 2));
       console.log(res?.[0]?.cep ?? "error")
-      setFinalCep(String(res?.[0]?.cep ?? "error"))
+      setFinalCep(String(res?.[0]?.cep ?? "error").replace("-", ""))
     } catch (err: any) {
       setErrorMsg(`ViaAPI: ${String(err)}`)
       console.error("Erro ao buscar na API ViaCEP: ", String(err))
     } finally {
       setLoadingCEP(false)
+    }
+  }
+
+  const handleClipboardCopy = async (txt: string): Promise<void> => {
+    try {
+      await navigator.clipboard.writeText(txt)
+      console.log("Foi copiado com sucesso ao copy paste do usuario o texto ", txt)
+      setCopyClip("Copiado!")
+    } catch (err:any){
+      console.error("Erro ao copiar o CEP pro ctrl c: ", String(err))
     }
   }
 
@@ -131,14 +167,17 @@ function MainView() {
           {loadingCEP?<b>Aguarde...</b>:<button onClick={handleCEPFetch}>Buscar</button>}
           {finalCep!=""?
           finalCep!="error"?
-          <span>CEP: {finalCep}</span>
-          :
-          <b>Este endereço está incorreto! (Erro 400)</b>
+          <div className='cep-show'>
+            <span>CEP: {finalCep}</span>
+            <button onClick={()=>handleClipboardCopy(finalCep)}>{copyClip}</button>
+          </div>
+          :<b>Este endereço está incorreto! (Erro 400)</b>
           :null}
           {invalidCountry?<p>Esse serviço funciona apenas no Brasil</p>:null}
-          {errorMsg!=""?<small>{errorMsg}</small>:null}
+          {errorMsg!=""?<small style={{color:"red"}}>{errorMsg}</small>:null}
         </div>
       </div>
+      {/* Ideia : adicionar busca reversa de endereço por cep */}
     </>
   )
 }

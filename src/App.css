@@ -10,10 +10,11 @@ header {
   justify-items: center;
   height: 8vh;
   background-color: #00ff80;
-  color: #fff;
+  color: #000;
   width: 100%;
   position: fixed;
   top: 0;
+  box-shadow: 0 1px 4px #000;
 }
 .left-side-header {
   display: flex;
@@ -52,6 +53,7 @@ header {
   border-radius: 24px;
   background-color: #fff;
   gap: 16px;
+  box-shadow: 0 1px 4px #000;
 }
 .main-view-container h3{
   font-size: 32px;
@@ -83,6 +85,16 @@ header {
 }
 .main-view-container button:hover{
   cursor: pointer;
+}
+
+.cep-show{
+  width: 60%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 29px;
+  margin-top: 30px;
 }
 
 @media (max-width: 768px) {

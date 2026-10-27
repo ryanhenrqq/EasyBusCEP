@@ -50,4 +50,5 @@ header {
   width: 40%;
   margin: 22px;
   background-color: #fff;
+  gap: 16px;
 }

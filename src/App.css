@@ -49,6 +49,63 @@ header {
   height: 40rem;
   width: 40%;
   margin: 22px;
+  border-radius: 24px;
   background-color: #fff;
   gap: 16px;
+}
+.main-view-container h3{
+  font-size: 32px;
+}
+.main-view-container input{
+  border: none;
+  border-radius: 24px;
+  padding: 8px;
+  width: 50%;
+  height: 2rem;
+  box-shadow: 0 1px 4px #000;
+}
+.main-view-container input:focus{
+  border: none;
+  outline: none;
+}
+.main-view-container input:disabled{
+  filter: brightness(0.5);
+}
+.main-view-container input:disabled:hover{
+  cursor: not-allowed;
+}
+.main-view-container button{
+  border: none;
+  border-radius: 24px;
+  height: 3rem;
+  width: 50%;
+  box-shadow: 0 2px 4px #000;
+}
+.main-view-container button:hover{
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .left-side-header h1 {
+    font-size: 18px;
+  }
+  .left-side-header b{
+    font-size: 12px;
+  }
+  .main-view{
+    margin-top: 5rem;
+  }
+  .main-view-container{
+    width: 90%;
+    height: 30rem;
+  }
+  .main-view-container h3{
+    font-size: 22px;
+  }
+  .main-view-container button{
+    width: 90%;
+  }
+  .main-view-container input{
+    width: 85%;
+  }
 }

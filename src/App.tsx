@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 import './App.css'
 
 function App() {
@@ -48,6 +50,9 @@ function MainView() {
   const [errorMsg, setErrorMsg]=useState<string>("")
 
   const [copyClip, setCopyClip]=useState<string>("Copiar")
+  const [triggerCoords, setTriggerCoords]=useState<boolean>(false)
+  const [lat, setLat]=useState<number>(0)
+  const [lon, setLon]=useState<number>(0)
 
   const handleGeoCoding = async() => {
     setLoadingGeo(true)
@@ -55,6 +60,9 @@ function MainView() {
       navigator.geolocation.getCurrentPosition((pos) => {
         const lat = Number(pos.coords.latitude)
         const lon = Number(pos.coords.longitude)
+        setLat(lat)
+        setLon(lon)
+        setTriggerCoords(true)
         handleFetTest(lat, lon)
       }, (error) => {
         setLoadingGeo(false)
@@ -103,7 +111,7 @@ function MainView() {
       setInvalidCountry(true)
       return
     } else {
-      if (state==""&&cidad==""&&rua==""){
+      if (stateCode==""&&cidad==""&&rua==""){
         setErrorMsg("Insira todas as informações acima.")
         return
       }
@@ -161,8 +169,10 @@ function MainView() {
           <h3>Busca de CEP por Endereço</h3>
           {!loadingGeo?<button onClick={handleGeoCoding}>Preencher Automaticamente</button>:<b>Aguarde...</b>}
           <input type="text" placeholder='País' value={country} disabled />
-          <input type="text" placeholder='UF (Ex.: SP)' maxlength={2} value={stateCode} onChange={(e)=>setStateCode(e.target.value.toUpperCase())} />
-          <input type="text" placeholder='Cidade' value={cidad} onChange={(e)=>setCidad(e.target.value)} />
+          <div className='inputs-city'>
+            <input type="text" placeholder='UF (Ex.: SP)' maxlength={2} value={stateCode} onChange={(e)=>setStateCode(e.target.value.toUpperCase())} disabled={triggerCoords} />
+            <input type="text" placeholder='Cidade' value={cidad} onChange={(e)=>setCidad(e.target.value)} disabled={triggerCoords} />
+          </div>
           <input type="text" placeholder='Rua' value={rua} onChange={(e)=>setRua(e.target.value)} required />
           {loadingCEP?<b>Aguarde...</b>:<button onClick={handleCEPFetch}>Buscar</button>}
           {finalCep!=""?
@@ -176,6 +186,17 @@ function MainView() {
           {invalidCountry?<p>Esse serviço funciona apenas no Brasil</p>:null}
           {errorMsg!=""?<small style={{color:"red", width:'80%', fontSize:'12px'}}>{errorMsg}</small>:null}
         </div>
+
+        {triggerCoords?
+        <div className="map-view-container">
+          <h3>Localização Aproximada:</h3>
+          <MapContainer center={[lat, lon]} zoom={14} style={{ height: '15rem', width: '15rem', pointerEvents:'none', borderRadius:'16px', boxShadow:'0 1px 8px #000' }} >
+            <TileLayer attribution='&copy; OpenStreetMap contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          </MapContainer>
+        </div>
+        :null
+        }
+        
       </div>
       {/* Ideia : adicionar busca reversa de endereço por cep */}
     </>

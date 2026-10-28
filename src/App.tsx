@@ -164,29 +164,50 @@ function MainView() {
       handleGeoCoding()
     }
   }, [])
+
+  const handleClearInputs = () => {
+    setFinalCep("")
+    setCidad("")
+    setStateCode("")
+    setRua("")
+    setTriggerCoords(false)
+    setLat(0)
+    setLon(0)
+  }
   return(
     <>
       <div className="main-view">
         <div className='main-view-flexbox'>
           <div className="main-view-container">
             <h3>Busca de CEP por Endereço</h3>
-            {!loadingGeo?<button onClick={handleGeoCoding}>Preencher Automaticamente</button>:<b>Aguarde...</b>}
-            <input type="text" placeholder='País' value={country} disabled />
-            <div className='inputs-city'>
-              <input type="text" placeholder='Cidade' value={cidad} onChange={(e)=>setCidad(e.target.value)} disabled={triggerCoords} />
-              <input type="text" placeholder='UF (Ex.: SP)' maxLength={2} value={stateCode} onChange={(e)=>setStateCode(e.target.value.toUpperCase())} disabled={triggerCoords} />
-            </div>
-            <input type="text" placeholder='Rua' value={rua} onChange={(e)=>setRua(e.target.value)} required />
-            {loadingCEP?<b>Aguarde...</b>:invalidCountry?<p>Esse serviço funciona apenas no Brasil</p>:<button onClick={handleCEPFetch}>Buscar</button>}
+            
             {finalCep!=""?
             finalCep!="error"?
-            <div className='cep-show'>
-              <span>CEP: {finalCep}</span>
-              <button onClick={()=>handleClipboardCopy(finalCep)}>{copyClip}</button>
-            </div>
-            :<b>Este endereço está incorreto! (Erro 400)</b>
-            :null}
-            {errorMsg!=""?<small style={{color:"red", width:'80%', fontSize:'12px'}}>{errorMsg}</small>:null}
+            <>
+              <div className='cep-show'>
+                <span style={{fontSize:'20px',fontWeight:'700'}}>CEP: {finalCep}</span>
+                <button onClick={()=>handleClipboardCopy(finalCep)}>{copyClip}</button>
+              </div>
+              <button onClick={handleClearInputs}>Nova Busca</button>
+            </>
+            :
+            <> {/* HANDLER DE REQUISIÇAO 400 API VIACEP */}
+              <b>Este endereço está incorreto! (Erro 400)</b>
+              <button onClick={handleClearInputs}>Voltar</button>
+            </>
+            :
+            <> {/* CODIGO MOSTRADO POR PADRAO - PREENCHIMENTO */}
+              {!loadingGeo?<button onClick={handleGeoCoding}>Preencher Automaticamente</button>:<b>Aguarde...</b>}
+              <input type="text" placeholder='País' value={country} disabled />
+              <div className='inputs-city'>
+                <input type="text" placeholder='Cidade' value={cidad} onChange={(e)=>setCidad(e.target.value)} disabled={triggerCoords} />
+                <input type="text" placeholder='UF (Ex.: SP)' maxLength={2} value={stateCode} onChange={(e)=>setStateCode(e.target.value.toUpperCase())} disabled={triggerCoords} />
+              </div>
+              <input type="text" placeholder='Rua' value={rua} onChange={(e)=>setRua(e.target.value)} required />
+              {loadingCEP?<b>Aguarde...</b>:invalidCountry?<p>Esse serviço funciona apenas no Brasil</p>:<button onClick={handleCEPFetch}>Buscar</button>}
+              {errorMsg!=""?<small style={{color:"red", width:'80%', fontSize:'12px'}}>{errorMsg}</small>:null}
+            </>
+            }
           </div>
 
           {triggerCoords?

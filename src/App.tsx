@@ -160,45 +160,63 @@ function MainView() {
   }
 
   useEffect(()=>{
-    handleGeoCoding()
+    if (!navigator.geolocation){
+      handleGeoCoding()
+    }
   }, [])
   return(
     <>
       <div className="main-view">
-        <div className="main-view-container">
-          <h3>Busca de CEP por Endereço</h3>
-          {!loadingGeo?<button onClick={handleGeoCoding}>Preencher Automaticamente</button>:<b>Aguarde...</b>}
-          <input type="text" placeholder='País' value={country} disabled />
-          <div className='inputs-city'>
-            <input type="text" placeholder='UF (Ex.: SP)' maxlength={2} value={stateCode} onChange={(e)=>setStateCode(e.target.value.toUpperCase())} disabled={triggerCoords} />
-            <input type="text" placeholder='Cidade' value={cidad} onChange={(e)=>setCidad(e.target.value)} disabled={triggerCoords} />
+        <div className='main-view-flexbox'>
+          <div className="main-view-container">
+            <h3>Busca de CEP por Endereço</h3>
+            {!loadingGeo?<button onClick={handleGeoCoding}>Preencher Automaticamente</button>:<b>Aguarde...</b>}
+            <input type="text" placeholder='País' value={country} disabled />
+            <div className='inputs-city'>
+              <input type="text" placeholder='Cidade' value={cidad} onChange={(e)=>setCidad(e.target.value)} disabled={triggerCoords} />
+              <input type="text" placeholder='UF (Ex.: SP)' maxlength={2} value={stateCode} onChange={(e)=>setStateCode(e.target.value.toUpperCase())} disabled={triggerCoords} />
+            </div>
+            <input type="text" placeholder='Rua' value={rua} onChange={(e)=>setRua(e.target.value)} required />
+            {loadingCEP?<b>Aguarde...</b>:invalidCountry?<p>Esse serviço funciona apenas no Brasil</p>:<button onClick={handleCEPFetch}>Buscar</button>}
+            {finalCep!=""?
+            finalCep!="error"?
+            <div className='cep-show'>
+              <span>CEP: {finalCep}</span>
+              <button onClick={()=>handleClipboardCopy(finalCep)}>{copyClip}</button>
+            </div>
+            :<b>Este endereço está incorreto! (Erro 400)</b>
+            :null}
+            {errorMsg!=""?<small style={{color:"red", width:'80%', fontSize:'12px'}}>{errorMsg}</small>:null}
           </div>
-          <input type="text" placeholder='Rua' value={rua} onChange={(e)=>setRua(e.target.value)} required />
-          {loadingCEP?<b>Aguarde...</b>:<button onClick={handleCEPFetch}>Buscar</button>}
-          {finalCep!=""?
-          finalCep!="error"?
-          <div className='cep-show'>
-            <span>CEP: {finalCep}</span>
-            <button onClick={()=>handleClipboardCopy(finalCep)}>{copyClip}</button>
-          </div>
-          :<b>Este endereço está incorreto! (Erro 400)</b>
-          :null}
-          {invalidCountry?<p>Esse serviço funciona apenas no Brasil</p>:null}
-          {errorMsg!=""?<small style={{color:"red", width:'80%', fontSize:'12px'}}>{errorMsg}</small>:null}
-        </div>
 
-        {triggerCoords?
-        <div className="map-view-container">
-          <h3>Localização Aproximada:</h3>
-          <MapContainer center={[lat, lon]} zoom={14} style={{ height: '15rem', width: '15rem', pointerEvents:'none', borderRadius:'16px', boxShadow:'0 1px 8px #000' }} >
-            <TileLayer attribution='&copy; OpenStreetMap contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          </MapContainer>
+          {triggerCoords?
+            <div className="map-view-container">
+              <h3>Localização Aproximada:</h3>
+              <MapContainer center={[lat, lon]} zoom={15} style={{ height: '15rem', width: '15rem', pointerEvents:'none', borderRadius:'16px', boxShadow:'0 1px 8px #000' }} >
+                <TileLayer attribution='&copy; OpenStreetMap contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              </MapContainer>
+            </div>
+            :null
+          }
         </div>
-        :null
-        }
-        
+                
+        <div className='about-view'>
+          <p>Criado por <a href='https://www.github.com/ryanhenrqq/' target='_blank'>Ryan Henrique</a></p>
+          <small>Dados publicos fornecidos pela ViaCEP.</small>
+        </div>
       </div>
       {/* Ideia : adicionar busca reversa de endereço por cep */}
+    </>
+  )
+}
+
+function AboutAttributes() {
+  return(
+    <>
+      <div className='about-view'>
+
+      </div>
+
     </>
   )
 }

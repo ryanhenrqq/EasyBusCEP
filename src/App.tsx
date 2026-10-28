@@ -38,7 +38,6 @@ interface ViaCEPTypage{
 }
 function MainView() {
   const [country, setCountry]=useState<string>("Brasil")
-  const [state, setState] = useState<string>("")
   const [stateCode, setStateCode] = useState<string>("")
   const [cidad, setCidad] = useState<string>("")
   const [rua, setRua]=useState<string>("")
@@ -59,10 +58,12 @@ function MainView() {
         handleFetTest(lat, lon)
       }, (error) => {
         setLoadingGeo(false)
+        setErrorMsg(`Não foi possivel conseguir a sua localização! (Erro: ${error})`)
         console.error("Erro ao conseguir a geolocalização: ", error)
       })
     } else {
       setLoadingGeo(false)
+      setErrorMsg(`Não foi possivel conseguir a sua localização por falta de permissões!`)
       console.error("Erro ao usar o recurso de GEOLOCALIZAÇÃO nativa.")
     }
   }
@@ -87,7 +88,7 @@ function MainView() {
       setStateCode(String(setter?.principalSubdivisionCode).replace("BR-", ""))
       setCidad(String(setter?.city))
     } catch (err:any){
-      setErrorMsg(`GeoCod: ${String(err)}`)
+      setErrorMsg(`Erro no GeoCod: ${String(err)}`)
       console.error("Erro na requisição da API GEOCODING: ", String(err))
     } finally {
       setLoadingGeo(false)
@@ -173,7 +174,7 @@ function MainView() {
           :<b>Este endereço está incorreto! (Erro 400)</b>
           :null}
           {invalidCountry?<p>Esse serviço funciona apenas no Brasil</p>:null}
-          {errorMsg!=""?<small style={{color:"red"}}>{errorMsg}</small>:null}
+          {errorMsg!=""?<small style={{color:"red", width:'80%', fontSize:'12px'}}>{errorMsg}</small>:null}
         </div>
       </div>
       {/* Ideia : adicionar busca reversa de endereço por cep */}

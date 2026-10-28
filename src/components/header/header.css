@@ -12,6 +12,8 @@ header {
   top: 0;
   box-shadow: 0 1px 4px #000;
   z-index: 99;
+  user-select: none;
+  -moz-user-select: none;
 }
 .left-side-header {
   display: flex;

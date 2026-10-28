@@ -1,3 +1,8 @@
+button, img { /* Global feature tag */
+    user-select: none;
+    -moz-user-select: none;
+}
+
 /*MAIN VIEW*/
 .main-view{
   display: flex;

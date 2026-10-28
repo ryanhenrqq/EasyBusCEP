@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import './App.css'
 
@@ -174,7 +174,7 @@ function MainView() {
             <input type="text" placeholder='País' value={country} disabled />
             <div className='inputs-city'>
               <input type="text" placeholder='Cidade' value={cidad} onChange={(e)=>setCidad(e.target.value)} disabled={triggerCoords} />
-              <input type="text" placeholder='UF (Ex.: SP)' maxlength={2} value={stateCode} onChange={(e)=>setStateCode(e.target.value.toUpperCase())} disabled={triggerCoords} />
+              <input type="text" placeholder='UF (Ex.: SP)' maxLength={2} value={stateCode} onChange={(e)=>setStateCode(e.target.value.toUpperCase())} disabled={triggerCoords} />
             </div>
             <input type="text" placeholder='Rua' value={rua} onChange={(e)=>setRua(e.target.value)} required />
             {loadingCEP?<b>Aguarde...</b>:invalidCountry?<p>Esse serviço funciona apenas no Brasil</p>:<button onClick={handleCEPFetch}>Buscar</button>}
@@ -206,17 +206,6 @@ function MainView() {
         </div>
       </div>
       {/* Ideia : adicionar busca reversa de endereço por cep */}
-    </>
-  )
-}
-
-function AboutAttributes() {
-  return(
-    <>
-      <div className='about-view'>
-
-      </div>
-
     </>
   )
 }

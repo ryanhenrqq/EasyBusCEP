@@ -84,7 +84,6 @@ function MainView() {
       console.log(res)
       const setter: GeocodingTypage | null = res
       setCountry(String(setter?.countryName))
-      setState(String(setter?.principalSubdivision))
       setStateCode(String(setter?.principalSubdivisionCode).replace("BR-", ""))
       setCidad(String(setter?.city))
     } catch (err:any){
@@ -107,8 +106,8 @@ function MainView() {
         setErrorMsg("Insira todas as informações acima.")
         return
       }
-      if (state==""){
-        setErrorMsg("Insira um estado.")
+      if (stateCode==""){
+        setErrorMsg("Insira um UF (Ex.: SP).")
         return
       }
       if (cidad=="") {
@@ -161,7 +160,7 @@ function MainView() {
           <h3>Busca de CEP por Endereço</h3>
           {!loadingGeo?<button onClick={handleGeoCoding}>Preencher Automaticamente</button>:<b>Aguarde...</b>}
           <input type="text" placeholder='País' value={country} disabled />
-          <input type="text" placeholder='Estado' value={state} onChange={(e)=>setState(e.target.value)} />
+          <input type="text" placeholder='UF (Ex.: SP)' maxlength={2} value={stateCode} onChange={(e)=>setStateCode(e.target.value.toUpperCase())} />
           <input type="text" placeholder='Cidade' value={cidad} onChange={(e)=>setCidad(e.target.value)} />
           <input type="text" placeholder='Rua' value={rua} onChange={(e)=>setRua(e.target.value)} required />
           {loadingCEP?<b>Aguarde...</b>:<button onClick={handleCEPFetch}>Buscar</button>}

@@ -3,6 +3,12 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import './App.css'
 
+import searchImg from './assets/search.png'
+import locImg from './assets/loc.png'
+import homImg from './assets/home.png'
+import copyImg from './assets/copy.png'
+import chkImg from './assets/check.png'
+
 function App() {
   return (
     <>
@@ -17,8 +23,12 @@ function Header() {
     <>
       <header>
         <div className="left-side-header">
-          <h1>EasyBusCEP</h1>
-          <b>Busque seu CEP facilmente!</b>
+          <img src={locImg} alt="Icone de Localização" className='search-img' />
+          <div className="title-flexbox">
+            <h1>EasyBusCEP</h1>
+            <b>Busque seu CEP facilmente!</b>
+          </div>
+          
         </div>
         <div className="right-side-header">
           <div>Versão de Teste</div>
@@ -49,10 +59,11 @@ function MainView() {
   const [invalidCountry, setInvalidCountry]=useState<boolean>(false)
   const [errorMsg, setErrorMsg]=useState<string>("")
 
-  const [copyClip, setCopyClip]=useState<string>("Copiar")
+  const [copyClip, setCopyClip]=useState<boolean>(false)
   const [triggerCoords, setTriggerCoords]=useState<boolean>(false)
   const [lat, setLat]=useState<number>(0)
   const [lon, setLon]=useState<number>(0)
+  const [linksBtnView, setLinksBtnView]=useState<boolean>(false)
 
   const handleGeoCoding = async() => {
     setLoadingGeo(true)
@@ -66,7 +77,7 @@ function MainView() {
         handleFetTest(lat, lon)
       }, (error) => {
         setLoadingGeo(false)
-        setErrorMsg(`Não foi possivel conseguir a sua localização! (Erro: ${error})`)
+        setErrorMsg(`Não foi possivel conseguir a sua localização! (Erro: ${error}, ${String(error).length})`)
         console.error("Erro ao conseguir a geolocalização: ", error)
       })
     } else {
@@ -153,7 +164,7 @@ function MainView() {
     try {
       await navigator.clipboard.writeText(txt)
       console.log("Foi copiado com sucesso ao copy paste do usuario o texto ", txt)
-      setCopyClip("Copiado!")
+      setCopyClip(true)
     } catch (err:any){
       console.error("Erro ao copiar o CEP pro ctrl c: ", String(err))
     }
@@ -166,6 +177,7 @@ function MainView() {
   }, [])
 
   const handleClearInputs = () => {
+    setCopyClip(false)
     setFinalCep("")
     setCidad("")
     setStateCode("")
@@ -173,6 +185,10 @@ function MainView() {
     setTriggerCoords(false)
     setLat(0)
     setLon(0)
+  }
+
+  const handleLinksBtnView = () => {
+    !linksBtnView?setLinksBtnView(true):setLinksBtnView(false)
   }
   return(
     <>
@@ -186,26 +202,30 @@ function MainView() {
             <>
               <div className='cep-show'>
                 <span style={{fontSize:'20px',fontWeight:'700'}}>CEP: {finalCep}</span>
-                <button onClick={()=>handleClipboardCopy(finalCep)}>{copyClip}</button>
+                {!copyClip?
+                  <button onClick={()=>handleClipboardCopy(finalCep)} style={{width:'60px', height:'60px', objectFit:'cover'}}><img src={copyImg} alt="Copiar" className='search-img' /></button>:
+                  <button onClick={()=>handleClipboardCopy(finalCep)} style={{width:'60px', height:'60px', objectFit:'cover'}}><img src={chkImg} alt="Copiado" className='search-img' /></button>
+                }
+                
               </div>
-              <button onClick={handleClearInputs}>Nova Busca</button>
+              <button onClick={handleClearInputs}><img src={homImg} alt="Tela Inicial" className='search-img' /></button>
             </>
             :
             <> {/* HANDLER DE REQUISIÇAO 400 API VIACEP */}
               <b>Este endereço está incorreto! (Erro 400)</b>
-              <button onClick={handleClearInputs}>Voltar</button>
+              <button onClick={handleClearInputs}><img src={homImg} alt="Tela Inicial" className='search-img' /></button>
             </>
             :
             <> {/* CODIGO MOSTRADO POR PADRAO - PREENCHIMENTO */}
-              {!loadingGeo?<button onClick={handleGeoCoding}>Preencher Automaticamente</button>:<b>Aguarde...</b>}
+              {!loadingGeo?<button onClick={handleGeoCoding}><img src={locImg} alt="Pesquisar" className='search-img' />Preencher Automaticamente</button>:<b>Aguarde...</b>}
               <input type="text" placeholder='País' value={country} disabled />
               <div className='inputs-city'>
                 <input type="text" placeholder='Cidade' value={cidad} onChange={(e)=>setCidad(e.target.value)} disabled={triggerCoords} />
                 <input type="text" placeholder='UF (Ex.: SP)' maxLength={2} value={stateCode} onChange={(e)=>setStateCode(e.target.value.toUpperCase())} disabled={triggerCoords} />
               </div>
               <input type="text" placeholder='Rua' value={rua} onChange={(e)=>setRua(e.target.value)} required />
-              {loadingCEP?<b>Aguarde...</b>:invalidCountry?<p>Esse serviço funciona apenas no Brasil</p>:<button onClick={handleCEPFetch}>Buscar</button>}
-              {errorMsg!=""?<small style={{color:"red", width:'80%', fontSize:'12px'}}>{errorMsg}</small>:null}
+              {loadingCEP?<b>Aguarde...</b>:invalidCountry?<p>Esse serviço funciona apenas no Brasil</p>:<button onClick={handleCEPFetch}><img src={searchImg} alt="Pesquisar" className='search-img' /></button>}
+              {errorMsg!=""?<small className='bottom-error' style={{color:"red", width:'80%', fontSize:'12px'}}>{errorMsg}</small>:null}
             </>
             }
           </div>
@@ -224,6 +244,16 @@ function MainView() {
         <div className='about-view'>
           <p>Criado por <a href='https://www.github.com/ryanhenrqq/' target='_blank'>Ryan Henrique</a></p>
           <small>Dados publicos fornecidos pela ViaCEP.</small>
+          <button onClick={handleLinksBtnView}>Créditos de uso</button>
+          {linksBtnView?
+          <>
+            <a href="https://www.flaticon.com/free-icons/search" title="search icons">Search icons created by Handicon - Flaticon</a>
+            <a href="https://www.flaticon.com/free-icons/location-pin" title="location pin icons">Location pin icons created by Pixel perfect - Flaticon</a>
+            <a href="https://www.flaticon.com/free-icons/home" title="home icons">Home icons created by Dave Gandy - Flaticon</a>
+            <a href="https://www.flaticon.com/free-icons/duplicate" title="duplicate icons">Duplicate icons created by Ranah Pixel Studio - Flaticon</a>
+            <a href="https://www.flaticon.com/free-icons/tick" title="tick icons">Tick icons created by Maxim Basinski Premium - Flaticon</a>
+          </>
+          :null}
         </div>
       </div>
       {/* Ideia : adicionar busca reversa de endereço por cep */}

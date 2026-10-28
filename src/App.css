@@ -19,16 +19,28 @@ header {
 }
 .left-side-header {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   margin-left: 20px;
+  gap: 16px;
 }
-.left-side-header h1{
+.title-flexbox{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.title-flexbox h1{
   font-size: 19px;
+  width: 100%;
+  text-align: left;
 }
-.left-side-header b {
+.title-flexbox b {
   font-size: 12px;
+  font-weight: 900;
+  width: 100%;
+  text-align: left;
 }
 .right-side-header{
   display: flex;
@@ -36,6 +48,9 @@ header {
   justify-content: center;
   align-items: center;
   margin-right: 20px;
+}
+.right-side-header div{
+  font-size: 13px;
 }
 
 /*MAIN VIEW*/
@@ -114,14 +129,35 @@ header {
   cursor: not-allowed;
 }
 .main-view-container button{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
   border: none;
   border-radius: 24px;
   height: 3rem;
   width: 50%;
+  font-weight: 600;
   box-shadow: 0 2px 4px #000;
 }
 .main-view-container button:hover{
   cursor: pointer;
+}
+
+.search-img{
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+}
+.bottom-error{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: red;
+  width: 80%;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .cep-show{
@@ -149,15 +185,20 @@ header {
   margin-top: 12px;
   gap: 16px;
   padding: 12px;
+  width: 20%;
   box-shadow: 0 1px 14px #000;
 }
 
 @media (max-width: 990px) {
-  .left-side-header h1 {
-    font-size: 18px;
+  .left-side-header img{
+    width: 25px;
+    height: 25px;
   }
-  .left-side-header b{
-    font-size: 12px;
+  .title-flexbox h1 {
+    font-size: 15px;
+  }
+  .title-flexbox b{
+    font-size: 10px;
   }
   .main-view{
     margin-top: 1rem;
@@ -182,5 +223,9 @@ header {
   }
   .main-view-container input{
     width: 85%;
+  }
+
+  .about-view{
+    width: 90%;
   }
 }

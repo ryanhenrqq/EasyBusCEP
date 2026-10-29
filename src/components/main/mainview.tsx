@@ -67,11 +67,11 @@ export function MainView() {
       setCountry(String(setter?.countryName))
       setStateCode(String(setter?.principalSubdivisionCode).replace("BR-", ""))
       setCidad(String(setter?.city))
+      setTriggerCoords(true)
     } catch (err:any){
       setErrorMsg(`Erro no GeoCod: ${String(err).replace("Error: ","")}`)
       console.error("Erro na requisição da API GEOCODING: ", String(err))
     } finally {
-        setTriggerCoords(true)
         setLoadingGeo(false)
     }
   }

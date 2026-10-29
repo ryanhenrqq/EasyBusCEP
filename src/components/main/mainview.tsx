@@ -35,7 +35,6 @@ export function MainView() {
         const lon = Number(pos.coords.longitude)
         setLat(lat)
         setLon(lon)
-        setTriggerCoords(true)
         handleFetTest(lat, lon)
       }, (error) => {
         setLoadingGeo(false)
@@ -69,10 +68,11 @@ export function MainView() {
       setStateCode(String(setter?.principalSubdivisionCode).replace("BR-", ""))
       setCidad(String(setter?.city))
     } catch (err:any){
-      setErrorMsg(`Erro no GeoCod: ${String(err)}`)
+      setErrorMsg(`Erro no GeoCod: ${String(err).replace("Error: ","")}`)
       console.error("Erro na requisição da API GEOCODING: ", String(err))
     } finally {
-      setLoadingGeo(false)
+        setTriggerCoords(true)
+        setLoadingGeo(false)
     }
   }
 
@@ -115,7 +115,7 @@ export function MainView() {
       console.log(res?.[0]?.cep ?? "error")
       setFinalCep(String(res?.[0]?.cep ?? "error").replace("-", ""))
     } catch (err: any) {
-      setErrorMsg(`ViaAPI: ${String(err)}`)
+      setErrorMsg(`Erro no ViaAPI: Pode ser que algum campo esteja inválido. (${String(err)})`)
       console.error("Erro ao buscar na API ViaCEP: ", String(err))
     } finally {
       setLoadingCEP(false)
@@ -192,7 +192,7 @@ export function MainView() {
               </div>
               <input type="text" placeholder='Rua' value={rua} onChange={(e)=>setRua(e.target.value)} required />
               {loadingCEP?<b>Aguarde...</b>:invalidCountry?<p>Esse serviço funciona apenas no Brasil</p>:<button onClick={handleCEPFetch}><img src={searchImg} alt="Pesquisar" className='search-img' /></button>}
-              {errorMsg!=""?<small className='bottom-error' style={{color:"red", width:'80%', fontSize:'12px'}}>{errorMsg}</small>:null}
+              {errorMsg!=""?<small className='bottom-error'>{errorMsg}</small>:null}
             </>
             }
           </div>
